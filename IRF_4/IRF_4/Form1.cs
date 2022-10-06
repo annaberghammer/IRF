@@ -37,7 +37,7 @@ namespace IRF_4
         public Form1()
         {
             InitializeComponent();
-            
+
             LoadData();
             CreateExcel();
             CreateTable();
@@ -117,7 +117,7 @@ namespace IRF_4
 
             for (int i = 0; i < flats.Count(); i++)
             {
-                xlSheet.Cells[i + 2, 9] = "=" + GetCell(i + 2, 8) + "/" + GetCell(i + 2, 7);
+                xlSheet.Cells[i + 2, 9] = "=" + GetCell(i + 2, 8) + "/" + GetCell(i + 2, 7) + "*1000000";
             }
         }
 
@@ -143,7 +143,7 @@ namespace IRF_4
 
             Excel.Range lastColumn = xlSheet.get_Range(GetCell(2, 9), GetCell(lastRowID, 9));
             lastColumn.Interior.Color = Color.LightGreen;
-            lastColumn.NumberFormat = "0,00";
+            lastColumn.NumberFormat = "### ### ##0.00";
 
         }
 
