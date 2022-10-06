@@ -107,6 +107,31 @@ namespace IRF_4
                 counter++;
             }
 
+            xlSheet.get_Range(
+                GetCell(2, 1),
+                GetCell(1 + values.GetLength(0), values.GetLength(1)))
+                .Value2 = values;
+
+            for (int i = 0; i < flats.Count(); i++)
+            {
+                xlSheet.Cells[i + 2, 9] = "=" + GetCell(i + 2, 8) + "/" + GetCell(i + 2, 7);
+            }
+        }
+        string GetCell(int x, int y)
+        {
+            string ExcelCoordinate = "";
+            int dividend = y;
+            int modulo;
+
+            while (dividend > 0)
+            {
+                modulo = (dividend - 1) % 26;
+                ExcelCoordinate = Convert.ToChar(65 + modulo).ToString() + ExcelCoordinate;
+                dividend = (int)((dividend - modulo) / 26);
+            }
+            ExcelCoordinate += x.ToString();
+
+            return ExcelCoordinate;
         }
     }
 }
