@@ -17,17 +17,50 @@ namespace IRF_4
         List<Flat> flats = new List<Flat>();
         RealEstateEntities context = new RealEstateEntities();
 
-        
+        Excel.Application xlApp; // A Microsoft Excel alkalmazás
+        Excel.Workbook xlWB; // A létrehozott munkafüzet
+        Excel.Worksheet xlSheet; // Munkalap a munkafüzeten belül
+
         public Form1()
         {
             InitializeComponent();
-
+            
             LoadData();
+
+
         }
 
         void LoadData()
         {
             flats = context.Flats.ToList();
+        }
+
+        void CreateExcel()
+        {
+            try
+            {
+                xlApp = new Excel.Application(); //Excel elindítása és az applikáció objektum betöltése            
+                xlWB = xlApp.Workbooks.Add(Missing.Value); //új munkafüzet              
+                xlSheet = xlWB.ActiveSheet; //új munkalap
+
+                // Tábla létrehozása
+                //CreateTable();
+
+                // Control átadása a felhasználónak
+                xlApp.Visible = true;
+                xlApp.UserControl = true;
+            }
+            catch (Exception ex) // Hibakezelés a beépített hibaüzenettel
+            {
+                string errMsg = string.Format("Error: {0}\nLine: {1}", ex.Message, ex.Source);
+                MessageBox.Show(errMsg, "Error");
+
+                // Hiba esetén az Excel applikáció bezárása automatikusan
+                xlWB.Close(false, Type.Missing, Type.Missing);
+                xlApp.Quit();
+                xlWB = null;
+                xlApp = null;
+            }
         }
     }
 }
