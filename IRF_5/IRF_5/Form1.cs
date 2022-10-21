@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace IRF_5
 {
@@ -19,10 +20,7 @@ namespace IRF_5
         public Form1()
         {
             InitializeComponent();
-        }
 
-        void GetExchangeRate()
-        {
             var mnbService = new MNBArfolyamServiceSoapClient();
             var request = new GetExchangeRatesRequestBody()
             {
@@ -33,6 +31,29 @@ namespace IRF_5
 
             var response = mnbService.GetExchangeRates(request);
             var result = response.GetExchangeRatesResult;
+
+            var xml = new XmlDocument();
+
+            xml.LoadXml(result);
+
+            foreach (XmlElement item in xml.DocumentElement)
+            {
+                RateData r = new RateData();
+
+                Rates.Add(r);
+
+                var childElement = (XmlElement)item.ChildNodes[0];
+
+                r.Date = DateTime.Parse(item.GetAttribute("date"));
+                r.Currency = childElement.GetAttribute("curr");
+                var unit = decimal.Parse(childElement.GetAttribute("unit"));
+                var value = decimal.Parse(childElement.InnerText);
+                if (unit != 0)
+                {
+                    r.Value = value / unit;
+                }
+            }
         }
+
     }
 }
