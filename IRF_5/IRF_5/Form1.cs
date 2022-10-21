@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -17,10 +18,34 @@ namespace IRF_5
     public partial class Form1 : Form
     {
         BindingList<RateData> Rates = new BindingList<RateData>();
+        BindingList<string> Currency = new BindingList<string>();
 
         public Form1()
         {
             InitializeComponent();
+
+            comboBox1.DataSource = Currency;
+            dataGridView1.DataSource = Rates;
+
+            var mnbService = new MNBArfolyamServiceSoapClient();
+            var request = new GetCurrenciesRequestBody();
+
+            var response = mnbService.GetCurrencies(request);
+            var result = response.GetCurrenciesResult;
+
+            var xml = new XmlDocument();
+
+            xml.LoadXml(result);
+
+            foreach (XmlElement item in xml.DocumentElement.ChildNodes[0])
+            {
+                string c;
+
+                var childElement = (XmlElement)item;
+
+                c = childElement.InnerText;
+                Currency.Add(c);
+            }
 
             RefreshData();
         }
@@ -54,6 +79,8 @@ namespace IRF_5
                 Rates.Add(r);
 
                 var childElement = (XmlElement)item.ChildNodes[0];
+                if (childElement == null)
+                    continue;
 
                 r.Date = DateTime.Parse(item.GetAttribute("date"));
                 r.Currency = childElement.GetAttribute("curr");
@@ -90,6 +117,7 @@ namespace IRF_5
             var result = GetExchangeRates();
             Xml(result);
             LoadData();
+
         }
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
