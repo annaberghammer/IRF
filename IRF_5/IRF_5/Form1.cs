@@ -42,6 +42,8 @@ namespace IRF_5
                 string c;
 
                 var childElement = (XmlElement)item;
+                if (childElement == null)
+                    continue;
 
                 c = childElement.InnerText;
                 Currency.Add(c);
