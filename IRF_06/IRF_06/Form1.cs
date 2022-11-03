@@ -1,4 +1,5 @@
-﻿using IRF_06.Entities;
+﻿using IRF_06.Abstractions;
+using IRF_06.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,11 +14,11 @@ namespace IRF_06
 {
     public partial class Form1 : Form
     {
-        List<Ball> _balls = new List<Ball>();
+        List<Toy> _toys = new List<Toy>();
 
-        private BallFactory _factory;
+        private IToyFactory _factory;
 
-        public BallFactory Factory
+        public IToyFactory Factory
         {
             get { return _factory; }
             set { _factory = value; }
@@ -28,34 +29,34 @@ namespace IRF_06
         {
             InitializeComponent();
 
-            Factory = new BallFactory();
+            Factory = new CarFactory();
         }
 
         private void createTimer_Tick(object sender, EventArgs e)
         {
-            var ball = Factory.CreateNew();
-            ball.Left = -ball.Width;
-            _balls.Add(ball);
-            mainPanel.Controls.Add(ball);
+            var toy = Factory.CreateNew();
+            toy.Left = -toy.Width;
+            _toys.Add(toy);
+            mainPanel.Controls.Add(toy);
         }
 
         private void conveyorTimer_Tick(object sender, EventArgs e)
         {
             var maxPosition = 0;
-            foreach (var b in _balls)
+            foreach (var t in _toys)
             {
-                b.MoveBall();
-                if (b.Left > maxPosition)
+                t.MoveToy();
+                if (t.Left > maxPosition)
                 {
-                    maxPosition = b.Left;
+                    maxPosition = t.Left;
                 }
             }
 
             if (maxPosition > 1000)
             {
-                var oldestBall = _balls[0];
-                mainPanel.Controls.Remove(oldestBall);
-                _balls.Remove(oldestBall);
+                var oldestToy = _toys[0];
+                mainPanel.Controls.Remove(oldestToy);
+                _toys.Remove(oldestToy);
             }
         }
     }
