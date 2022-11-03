@@ -102,5 +102,14 @@ namespace IRF_06
             }
             button.BackColor = colorPicker.Color;
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Factory = new PresentFactory()
+            {
+                RibbonColor = btnRibbon.BackColor,
+                BoxColor = btnBox.BackColor
+            };
+        }
     }
 }
