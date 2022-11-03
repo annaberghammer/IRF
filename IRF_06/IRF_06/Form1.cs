@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -84,6 +85,19 @@ namespace IRF_06
             _nextToy.Top = lblNext.Top + lblNext.Height + 20;
             _nextToy.Left = lblNext.Left;
             Controls.Add(_nextToy);
+        }
+
+        private void btnColor_Click(object sender, EventArgs e)
+        {
+            var button = (Button)sender;
+            var colorPicker = new ColorDialog();
+
+            colorPicker.Color = btnColor.BackColor;
+            if (colorPicker.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+            button.BackColor = colorPicker.Color;
         }
     }
 }

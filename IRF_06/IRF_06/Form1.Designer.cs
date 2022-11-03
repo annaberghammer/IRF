@@ -35,6 +35,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.lblNext = new System.Windows.Forms.Label();
+            this.btnColor = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // mainPanel
@@ -88,11 +89,22 @@
             this.lblNext.TabIndex = 2;
             this.lblNext.Text = "Coming next:";
             // 
+            // btnColor
+            // 
+            this.btnColor.BackColor = System.Drawing.Color.Fuchsia;
+            this.btnColor.Location = new System.Drawing.Point(175, 13);
+            this.btnColor.Name = "btnColor";
+            this.btnColor.Size = new System.Drawing.Size(75, 31);
+            this.btnColor.TabIndex = 3;
+            this.btnColor.UseVisualStyleBackColor = false;
+            this.btnColor.Click += new System.EventHandler(this.btnColor_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnColor);
             this.Controls.Add(this.lblNext);
             this.Controls.Add(this.mainPanel);
             this.Controls.Add(this.button2);
@@ -112,6 +124,7 @@
         private System.Windows.Forms.Label lblNext;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnColor;
     }
 }
 
