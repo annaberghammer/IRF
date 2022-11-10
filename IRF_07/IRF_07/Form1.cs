@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IRF_07.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,6 +16,8 @@ namespace IRF_07
         List<Tick> Ticks;
         PortfolioEntities context = new PortfolioEntities();
 
+        List<PortfolioItem> Portfolio = new List<PortfolioItem>;
+
         public Form1()
         {
             InitializeComponent();
@@ -22,6 +25,17 @@ namespace IRF_07
             Ticks = context.Ticks.ToList();
             dataGridView1.DataSource = Ticks;
 
+            CreatePortfolio();
+
+        }
+
+        void CreatePortfolio()
+        {
+            Portfolio.Add(new PortfolioItem() { Index = "OTP", Volume = 10 });
+            Portfolio.Add(new PortfolioItem() { Index = "ZWACK", Volume = 10 });
+            Portfolio.Add(new PortfolioItem() { Index = "ELMU", Volume = 10 });
+
+            dataGridView2.DataSource = Portfolio;
         }
     }
 }
