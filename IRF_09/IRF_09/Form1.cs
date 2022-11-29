@@ -27,6 +27,22 @@ namespace IRF_09
             Population = GetPopulation(@"C:\Windows\Temp\nép.csv");
             BirthProbabilities = GetBirthProbability(@"C:\Windows\Temp\születés.csv");
             DeathProbabilities = GetDeathProbability(@"C:\Windows\Temp\halál.csv");
+
+            for (int i = 2005; i <= 2024; i++)
+            {
+                for (int j = 0; j < Population.Count; j++)
+                {
+
+                }
+
+                int NbrOfMales = (from x in Population
+                                  where x.Gender == Gender.Male && x.IsAlive == true
+                                  select x).Count();
+
+                int NbrOfFemales = (from x in Population
+                                    where x.Gender == Gender.Female && x.IsAlive == true
+                                    select x).Count();
+            }
         }
 
         public List<Person> GetPopulation(string csvpath)
