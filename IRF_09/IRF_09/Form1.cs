@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,22 +18,33 @@ namespace IRF_09
         List<Person> Population = new List<Person>();
         List<BirthProbability> BirthProbabilities = new List<BirthProbability>();
         List<DeathProbability> DeathProbabilities = new List<DeathProbability>();
+        List<int> Males = new List<int>();
+        List<int> Females = new List<int>();
 
         Random rng = new Random(1234);
 
         public Form1()
         {
             InitializeComponent();
+        }
 
-            Population = GetPopulation(@"C:\Windows\Temp\nép.csv");
-            BirthProbabilities = GetBirthProbability(@"C:\Windows\Temp\születés.csv");
-            DeathProbabilities = GetDeathProbability(@"C:\Windows\Temp\halál.csv");
-
-            for (int i = 2005; i <= 2024; i++)
+        void Simulation()
+        {
+            for (int i = 2005; i <= numericUpDown1.Value; i++)
             {
                 for (int j = 0; j < Population.Count; j++)
                 {
-                    SimStep(i, j);
+                    SimStep(i, Population[j]);
+                    
+                    if (Population[j].Gender == Gender.Male)
+                    {
+                        Males.Add(i);                         
+                    }
+                    else
+                    {
+                        Females.Add(i);
+                    }
+                    
                 }
 
                 int NbrOfMales = (from x in Population
@@ -43,6 +55,8 @@ namespace IRF_09
                                     where x.Gender == Gender.Female && x.IsAlive == true
                                     select x).Count();
             }
+
+            DisplayResult(Males, Females);
         }
 
         public List<Person> GetPopulation(string csvpath)
@@ -51,12 +65,15 @@ namespace IRF_09
 
             using (StreamReader sr = new StreamReader(csvpath, Encoding.Default))
             {
-                var line = sr.ReadLine().Split(';');
-                Person p = new Person();
-                p.BirthYear = int.Parse(line[0]);
-                p.Gender = (Gender)int.Parse(line[1]);
-                p.NbrOfChildren = int.Parse(line[2]);
-                population.Add(p);
+                while(!sr.EndOfStream)
+                {
+                    var line = sr.ReadLine().Split(';');
+                    Person p = new Person();
+                    p.BirthYear = int.Parse(line[0]);
+                    p.Gender = (Gender)int.Parse(line[1]);
+                    p.NbrOfChildren = int.Parse(line[2]);
+                    population.Add(p);
+                }                
             }
 
             return population;
@@ -68,12 +85,15 @@ namespace IRF_09
 
             using (StreamReader sr = new StreamReader(csvpath, Encoding.Default))
             {
-                var line = sr.ReadLine().Split(';');
-                BirthProbability b = new BirthProbability();
-                b.Age = int.Parse(line[0]);
-                b.NbrOfChildren = int.Parse(line[1]);
-                b.P = double.Parse(line[2]);
-                birthprobaility.Add(b);
+                while (!sr.EndOfStream)
+                {
+                    var line = sr.ReadLine().Split(';');
+                    BirthProbability b = new BirthProbability();
+                    b.Age = int.Parse(line[0]);
+                    b.NbrOfChildren = int.Parse(line[1]);
+                    b.P = double.Parse(line[2]);
+                    birthprobaility.Add(b);
+                }                
             }
 
             return birthprobaility;
@@ -85,12 +105,15 @@ namespace IRF_09
 
             using (StreamReader sr = new StreamReader(csvpath, Encoding.Default))
             {
-                var line = sr.ReadLine().Split(';');
-                DeathProbability d = new DeathProbability();
-                d.Gender = (Gender)int.Parse(line[0]);
-                d.Age = int.Parse(line[1]);
-                d.P = double.Parse(line[2]);
-                deathprobability.Add(d);
+                while(!sr.EndOfStream)
+                {
+                    var line = sr.ReadLine().Split(';');
+                    DeathProbability d = new DeathProbability();
+                    d.Gender = (Gender)int.Parse(line[0]);
+                    d.Age = int.Parse(line[1]);
+                    d.P = double.Parse(line[2]);
+                    deathprobability.Add(d);
+                }
             }
 
             return deathprobability;
@@ -122,6 +145,50 @@ namespace IRF_09
                 newBorn.NbrOfChildren = 0;
                 Population.Add(newBorn);
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Population = GetPopulation(textBox1.Text);
+            BirthProbabilities = GetBirthProbability(@"C:\Windows\Temp\születés.csv");
+            DeathProbabilities = GetDeathProbability(@"C:\Windows\Temp\halál.csv");
+
+            Males.DefaultIfEmpty();
+            Females.DefaultIfEmpty();
+            richTextBox1.Text = "";
+
+            Simulation();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = Application.StartupPath;
+            ofd.Filter = "Comma Seperated Values (*.csv)|*.csv";
+            ofd.DefaultExt = "csv";
+            ofd.AddExtension = true;
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+            textBox1.Text = ofd.FileName;
+        }
+
+        void DisplayResult(List<int> males, List<int> females)
+        {
+            string text = "";
+            
+            for (int i = 2005; i <= numericUpDown1.Value; i++)
+            {
+                int NbrOfMales = (from x in males
+                                  where x == i
+                                  select x).Count();
+
+                int NbrOfFemales = (from x in females
+                                    where x == i
+                                    select x).Count();
+
+                text = text + "Szimulációs év: " + i + "\n\tFiúk: " + NbrOfMales + "\n\tLányok:" + NbrOfFemales + "\n\n";
+            }
+
+            richTextBox1.Text = text;
         }
     }
 }
