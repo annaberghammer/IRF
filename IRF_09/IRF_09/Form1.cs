@@ -32,7 +32,7 @@ namespace IRF_09
             {
                 for (int j = 0; j < Population.Count; j++)
                 {
-
+                    SimStep(i, j);
                 }
 
                 int NbrOfMales = (from x in Population
@@ -94,6 +94,34 @@ namespace IRF_09
             }
 
             return deathprobability;
+        }
+
+        void SimStep(int year, Person person)
+        {
+            if (!person.IsAlive) return;
+
+            int age = year - person.BirthYear;
+
+            double pD = (from x in DeathProbabilities
+                        where x.Age == age && x.Gender == person.Gender
+                        select x.P).FirstOrDefault();
+
+            if (rng.NextDouble() <= pD) person.IsAlive = false;
+
+            if (person.IsAlive == false || person.Gender == Gender.Male) return;
+
+            double pB = (from x in BirthProbabilities
+                         where x.Age == age && x.NbrOfChildren == person.NbrOfChildren
+                         select x.P).FirstOrDefault();
+
+            if (rng.NextDouble() <= pB)
+            {
+                Person newBorn = new Person();
+                newBorn.Gender = (Gender)rng.Next(1, 3);
+                newBorn.BirthYear = year;
+                newBorn.NbrOfChildren = 0;
+                Population.Add(newBorn);
+            }
         }
     }
 }
